@@ -1,5 +1,7 @@
 import fs from "fs";
 import lodash from "lodash";
+import cheerio from "cheerio";
+import axios from "axios";
 
 function getMrtStations() {
   fs.readFile("data/source/mrt_stations.json", "utf8", (err, data) => {
@@ -29,10 +31,43 @@ function getMrtStations() {
   });
 }
 
+async function getMammals() {
+  const url = "https://www.nparks.gov.sg/biodiversity/wildlife-in-singapore/species-list/mammal";
+  const document = await axios.get(url);
+  let $ = cheerio.load(document.data);
 
-  outData = Object.keys(outData).sort();
-  // console.log(outData);
+  // console.log($('table > tbody > tr > td').text());
 
-  fs.writeFile("./data/mrt_stations.json", JSON.stringify(outData, null, 2), (_) => { });
-});});getMrtStations();getMrtStations();
+  let test = [];
+  $('table > tbody > tr').each(function (idx, tbody) {
+    if (idx !== 0) {
+      const tr = cheerio(tbody);
+      const isSubheading = (tr.children('td').attr('colspan') == 4);
+      test[idx] = isSubheading;
+      // test[idx] = el.attr('colspan');
+      // test[idx] = $(this).children('td').html();
+
+      // let td = tr.children().length;
+      // test.push(tr);
+      // $(this).children('td').each(function (idx, p) {
+      //   test[idx] = $(this).text();
+      // });
+    }
+  });
+  console.log(test.join('\nisSubheading: '));
+
+  // const fruits = [];
+  // let $ = cheerio.load('<ul id="fruits">\
+  //   <li class="apple">Apple</li>\
+  //   <li class="orange">Orange</li>\
+  //   <li class="pear">Pear</li>\
+  // </ul>');
+  // $('li').each(function (i, elem) {
+  //   fruits[i] = $(this).text();
+  // });
+  // console.log(fruits.join(', '));
+  // console.log($('ul > li').text());
+}
+
+getMrtStations();
 getMammals();

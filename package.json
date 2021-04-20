@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/daffodilistic/sg-zoo-ids#readme",
   "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.6",
     "lodash": "^4.17.21"
   }
 }
