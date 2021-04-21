@@ -39,11 +39,23 @@ async function getMammals() {
   // console.log($('table > tbody > tr > td').text());
 
   let test = [];
+  let parseNextRow = false;
   $('table > tbody > tr').each(function (idx, tbody) {
     if (idx !== 0) {
       const tr = cheerio(tbody);
       const isSubheading = (tr.children('td').attr('colspan') == 4);
-      test[idx] = isSubheading;
+
+      if (isSubheading) {
+        parseNextRow = true;
+      } else if (parseNextRow) {
+        const rowData = tr.children('td').children('p').map((_, e) => {
+          return cheerio(e).text();
+        }).get();
+        
+        parseNextRow = false;
+
+        console.log(`[${idx - 1}] isSubheading: ${element}`);
+      }
       // test[idx] = el.attr('colspan');
       // test[idx] = $(this).children('td').html();
 
@@ -54,7 +66,10 @@ async function getMammals() {
       // });
     }
   });
-  console.log(test.join('\nisSubheading: '));
+
+  test.forEach((v, i) => {
+    console.log(`[${i}] isSubheading: ${v}`);
+  });
 
   // const fruits = [];
   // let $ = cheerio.load('<ul id="fruits">\
@@ -69,5 +84,5 @@ async function getMammals() {
   // console.log($('ul > li').text());
 }
 
-getMrtStations();
+// getMrtStations();
 getMammals();

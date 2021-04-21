@@ -6,7 +6,7 @@ import _ from "lodash";
 
 function generate() {
   let adjective = getWord(adjectives);
-  let reddot = getWord(JSON.parse(fs.readFileSync("./data/mrt_stations.json")));
+  let reddot = getWord(JSON.parse(fs.readFileSync("./data/mrt.json")));
   let animal = getWord(animals);
   let word = [adjective, reddot, animal];
   let id = getId();
