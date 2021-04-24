@@ -59,7 +59,9 @@ async function getNEASpeciesList(url, outputFile) {
       faunaName = faunaName.replace(/ \([\s\S]*?\)/g, '')
         .replace(/[^\w\s]/gi, '')
         .trim();
-      faunaData.push(faunaName);
+      if (faunaName.length > 0) {
+        faunaData.push(faunaName);
+      }
     }
   });
 
