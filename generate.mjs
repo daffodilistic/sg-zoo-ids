@@ -55,9 +55,11 @@ async function getNEASpeciesList(url, outputFile) {
     const td = cheerio(tr).children();
     const isSubheading = td.first().attr('colspan') != null;
     if (!isSubheading) {
-      let faunaDataRow = cheerio(tr).children('td:eq(2)').text().trim();
-      
-      faunaData.push(faunaDataRow);
+      let faunaName = cheerio(tr).children('td:eq(2)').text();
+      faunaName = faunaName.replace(/ \([\s\S]*?\)/g, '')
+        .replace(/[^\w\s]/gi, '')
+        .trim();
+      faunaData.push(faunaName);
     }
   });
 
