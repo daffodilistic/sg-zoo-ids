@@ -34,55 +34,29 @@ function getMrtStations() {
 async function getMammals() {
   const url = "https://www.nparks.gov.sg/biodiversity/wildlife-in-singapore/species-list/mammal";
   const document = await axios.get(url);
+
   let $ = cheerio.load(document.data);
+  let mammalData = [];
 
-  // console.log($('table > tbody > tr > td').text());
-
-  let test = [];
-  let parseNextRow = false;
-  $('table > tbody > tr').each(function (idx, tbody) {
-    if (idx !== 0) {
-      const tr = cheerio(tbody);
-      const isSubheading = (tr.children('td').attr('colspan') == 4);
-
-      if (isSubheading) {
-        parseNextRow = true;
-      } else if (parseNextRow) {
-        const rowData = tr.children('td').children('p').map((_, e) => {
-          return cheerio(e).text();
-        }).get();
-        
-        parseNextRow = false;
-
-        console.log(`[${idx - 1}] isSubheading: ${element}`);
-      }
-      // test[idx] = el.attr('colspan');
-      // test[idx] = $(this).children('td').html();
-
-      // let td = tr.children().length;
-      // test.push(tr);
-      // $(this).children('td').each(function (idx, p) {
-      //   test[idx] = $(this).text();
+  $('table > tbody > tr:gt(0) ').each(function (idx, tbody) {
+    const td = cheerio(tbody).children();
+    const isSubheading = td.first().attr('colspan') != null;
+    if (!isSubheading) {
+      // td.children().each(function (ri, p) {
+      //   mammalRow[ri] = cheerio(p).text();
       // });
+      // mammalRow = cheerio(td.children().get()[2]).text();
+      let mammalName = td.children('p:eq(2)').text();
+      mammalData.push(mammalName);
     }
   });
 
-  test.forEach((v, i) => {
-    console.log(`[${i}] isSubheading: ${v}`);
-  });
-
-  // const fruits = [];
-  // let $ = cheerio.load('<ul id="fruits">\
-  //   <li class="apple">Apple</li>\
-  //   <li class="orange">Orange</li>\
-  //   <li class="pear">Pear</li>\
-  // </ul>');
-  // $('li').each(function (i, elem) {
-  //   fruits[i] = $(this).text();
+  // mammalData.forEach((v, i) => {
+  //   console.log(`[${i}]: ${v}`);
   // });
-  // console.log(fruits.join(', '));
-  // console.log($('ul > li').text());
+
+  fs.writeFile("./data/mammals.json", JSON.stringify(mammalData, null, 2), (_) => { });
 }
 
-// getMrtStations();
+getMrtStations();
 getMammals();
