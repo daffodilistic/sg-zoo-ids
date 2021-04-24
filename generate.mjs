@@ -3,6 +3,16 @@ import lodash from "lodash";
 import cheerio from "cheerio";
 import axios from "axios";
 
+const NEA_PAGES = [
+  "mammal",
+  "freshwater-fish",
+  "dragonfly",
+  "butterfly"
+];
+
+getMrtStations();
+getNEASpecies();
+
 function getMrtStations() {
   fs.readFile("data/source/mrt_stations.json", "utf8", (err, data) => {
     if (err) {
@@ -27,36 +37,41 @@ function getMrtStations() {
     outData = Object.keys(outData).sort();
     // console.log(outData);
 
-    fs.writeFile("./data/mrt.json", JSON.stringify(outData, null, 2), (_) => { });
+    fs.writeFile(
+      "./data/mrt.json",
+      JSON.stringify(outData, null, 2),
+      (_) => { }
+    );
   });
 }
 
-async function getMammals() {
-  const url = "https://www.nparks.gov.sg/biodiversity/wildlife-in-singapore/species-list/mammal";
+async function getNEASpeciesList(url, outputFile) {
   const document = await axios.get(url);
 
   let $ = cheerio.load(document.data);
-  let mammalData = [];
+  let faunaData = [];
 
-  $('table > tbody > tr:gt(0) ').each(function (idx, tbody) {
-    const td = cheerio(tbody).children();
+  $('table > tbody > tr:gt(0) ').each(function (idx, tr) {
+    const td = cheerio(tr).children();
     const isSubheading = td.first().attr('colspan') != null;
     if (!isSubheading) {
-      // td.children().each(function (ri, p) {
-      //   mammalRow[ri] = cheerio(p).text();
-      // });
-      // mammalRow = cheerio(td.children().get()[2]).text();
-      let mammalName = td.children('p:eq(2)').text();
-      mammalData.push(mammalName);
+      let faunaDataRow = cheerio(tr).children('td:eq(2)').text().trim();
+      
+      faunaData.push(faunaDataRow);
     }
   });
 
-  // mammalData.forEach((v, i) => {
-  //   console.log(`[${i}]: ${v}`);
-  // });
-
-  fs.writeFile("./data/mammals.json", JSON.stringify(mammalData, null, 2), (_) => { });
+  fs.writeFile(outputFile, JSON.stringify(faunaData, null, 2), (_) => { });
 }
 
-getMrtStations();
-getMammals();
+function getNEASpecies() {
+  const DATA_PATH = "./data/";
+  const NEA_BASE_URL =
+    "https://www.nparks.gov.sg/biodiversity/wildlife-in-singapore/species-list/";
+
+  for (let page of NEA_PAGES) {
+    let url = `${NEA_BASE_URL}/${page}`;
+    let filePath = `${DATA_PATH}/${page}.json`;
+    getNEASpeciesList(url, filePath);
+  }
+}
