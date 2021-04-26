@@ -1,14 +1,16 @@
 {
-  "name": "sg-zoo-ids",
+  "name": "singaporids",
   "version": "1.0.0",
   "description": "A simple library to generate uniquely Singapore IDs, similar to GfyCat's AdjectiveAdjectiveAnimal system.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "test"
+    "lint": "npx eslint \"**/*.js\"",
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daffodilistic/sg-zoo-ids.git"
+    "url": "git+https://github.com/daffodilistic/singaporids.git"
   },
   "keywords": [
     "singapore"
@@ -16,12 +18,15 @@
   "author": "Soh Thiam Hing",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/daffodilistic/sg-zoo-ids/issues"
+    "url": "https://github.com/daffodilistic/singaporids/issues"
   },
-  "homepage": "https://github.com/daffodilistic/sg-zoo-ids#readme",
+  "homepage": "https://github.com/daffodilistic/singaporids#readme",
   "dependencies": {
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.6",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0"
   }
 }

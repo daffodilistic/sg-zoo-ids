@@ -1,23 +1,32 @@
 import fs from "fs";
-import adjectives from "./data/adjectives.js";
-import animals from "./data/animals.js";
+import { NEA_PAGES } from "./generate.js";
+import adjectives from "./data/adjectives.cjs";
+// import animals from "./data/animals.js";
 import lodash from "lodash";
-import _ from "lodash";
 
 function generate() {
   let adjective = getWord(adjectives);
   let reddot = getWord(JSON.parse(fs.readFileSync("./data/mrt.json")));
-  let animal = getWord(animals);
-  let word = [adjective, reddot, animal];
+  let fauna = getWord(getNativeFauna());
+  // let animal = getWord(animals);
+  let word = [adjective, reddot, fauna];
   let id = getId();
 
   word = word.map(e => {
     let o = lodash.startCase(lodash.toLower(e));
-    o = o.split(' ').join('')
+    o = o.split(' ').join('');
     return o;
   });
   word = word.join('');
   return word + '-' + id.join('');
+}
+
+function getNativeFauna() {
+  let faunaList = [];
+  for (const filename of NEA_PAGES) {
+    faunaList = JSON.parse(fs.readFileSync(`./data/${filename}.json`));
+  }
+  return faunaList;
 }
 
 function getWord(wordList) {
@@ -28,7 +37,7 @@ function getWord(wordList) {
 function getId() {
   let id = [];
   for (var i = 0; i < 4; i++) {
-    id.push(lodash.random(0,9));
+    id.push(lodash.random(0, 9));
   }
   return id;
 }
