@@ -24,8 +24,21 @@ function generate() {
 function getNativeFauna() {
   let faunaList = [];
   for (const filename of NEA_PAGES) {
-    faunaList = JSON.parse(fs.readFileSync(`./data/${filename}.json`));
+    let data = JSON.parse(fs.readFileSync(`./data/${filename}.json`));
+    switch (filename) {
+      case 'butterfly':
+        data.forEach((name, idx) => {
+          if (name.search('fly') === -1) {
+            data[idx] = `${name} Butterfly`;
+          }
+        });
+        break;
+      default:
+        break;
+    }
+    faunaList = faunaList.concat(data);
   }
+
   return faunaList;
 }
 
